@@ -42,8 +42,13 @@
             'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             'shimmer': 'shimmer 2.5s linear infinite',
             'float': 'float 6s ease-in-out infinite',
+            'fade-in': 'fadeIn 0.4s ease-out forwards',
           },
           keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(12px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
             shimmer: {
               '0%': { backgroundPosition: '-200% 0' },
               '100%': { backgroundPosition: '200% 0' },
@@ -83,7 +88,7 @@
       box-shadow: 0 0 35px rgba(212, 175, 55, 0.22);
     }
     .glass-luxury {
-      background: rgba(18, 18, 23, 0.75);
+      background: rgba(18, 18, 23, 0.85);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -102,23 +107,39 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #D4AF37;
     }
+    /* Category Card Hover Effect */
+    .category-card {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .category-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(212, 175, 55, 0.6);
+      box-shadow: 0 16px 40px -10px rgba(212, 175, 55, 0.25);
+    }
   </style>
 </head>
 <body class="selection:bg-brand-gold selection:text-black">
 
-  <!-- TOP ANNOUNCEMENT BAR -->
-  <div class="bg-gradient-to-r from-brand-dark via-[#1c180e] to-brand-dark border-b border-brand-gold/20 py-2 px-4 text-xs text-center text-brand-goldLight tracking-widest uppercase flex items-center justify-center gap-3">
-    <span class="inline-block w-2 h-2 rounded-full bg-brand-gold animate-ping"></span>
-    <span>2026 AURELIA V12 ROYALE EDITION WORLD PREMIERE — 대한민국 한정 7대 배정 완료</span>
-    <span class="hidden md:inline text-brand-muted">|</span>
-    <a href="#booking" class="hidden md:inline underline hover:text-white transition-colors">VIP 프라이빗 뷰잉 신청하기 &rarr;</a>
+  <!-- TOP ANNOUNCEMENT & ACTIVE CATEGORY INDICATOR BAR -->
+  <div class="bg-gradient-to-r from-brand-dark via-[#1c180e] to-brand-dark border-b border-brand-gold/20 py-2 px-4 text-xs text-brand-goldLight tracking-widest flex items-center justify-between shadow-sm">
+    <div class="flex items-center gap-2 mx-auto sm:mx-0">
+      <span class="inline-block w-2 h-2 rounded-full bg-brand-gold animate-ping"></span>
+      <span class="text-[11px] sm:text-xs">2026 AURELIA V12 ROYALE EDITION WORLD PREMIERE</span>
+    </div>
+    <div class="hidden sm:flex items-center gap-3 text-[11px]">
+      <span class="text-gray-400">현재 탐색 중:</span>
+      <span id="topActiveCategoryBadge" class="px-2.5 py-0.5 rounded-full bg-brand-gold/15 text-brand-gold font-semibold border border-brand-gold/30">
+        홈 (사이트 소개 & 카테고리)
+      </span>
+    </div>
   </div>
 
   <!-- NAVIGATION HEADER -->
-  <header id="navbar" class="fixed top-8 left-0 right-0 z-50 transition-all duration-300 px-4 md:px-10">
-    <div class="max-w-7xl mx-auto glass-luxury rounded-2xl px-6 py-4 flex items-center justify-between shadow-2xl">
-      <!-- Logo -->
-      <a href="#" class="flex items-center gap-3 group">
+  <header id="navbar" class="sticky top-0 z-50 transition-all duration-300 px-4 md:px-8 py-3 bg-brand-dark/95 backdrop-blur-xl border-b border-white/10 shadow-2xl">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo (Click to go Home) -->
+      <a href="javascript:void(0)" onclick="switchCategory('home')" class="flex items-center gap-3 group flex-shrink-0" title="초기 홈으로 돌아가기">
         <div class="w-10 h-10 rounded-full border border-brand-gold/50 flex items-center justify-center bg-brand-gold/10 group-hover:scale-105 group-hover:border-brand-gold transition-all duration-300">
           <svg class="w-6 h-6 text-brand-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
@@ -130,125 +151,313 @@
         </div>
       </a>
 
-      <!-- Desktop Nav Menu -->
-      <nav class="hidden lg:flex items-center gap-8 text-sm tracking-wider uppercase font-medium text-gray-300">
-        <a href="#models" class="hover:text-brand-gold transition-colors">컬렉션 (Models)</a>
-        <a href="#bespoke" class="hover:text-brand-gold transition-colors">비스포크 아틀리에</a>
-        <a href="#craftsmanship" class="hover:text-brand-gold transition-colors">장인정신 (Heritage)</a>
-        <a href="#membership" class="hover:text-brand-gold transition-colors">VIP 멤버십</a>
-        <a href="#experience" class="hover:text-brand-gold transition-colors">엔진 사운드</a>
+      <!-- Desktop Nav Menu Tabs -->
+      <nav class="hidden xl:flex items-center gap-1.5 text-xs tracking-wider uppercase font-medium">
+        <button onclick="switchCategory('home')" data-cat="home" class="nav-tab-btn px-3.5 py-2 rounded-xl transition-all duration-200 bg-brand-gold text-black font-bold shadow-md">
+          홈 & 카테고리
+        </button>
+        <button onclick="switchCategory('models')" data-cat="models" class="nav-tab-btn px-3.5 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-200">
+          01. 플래그십 컬렉션
+        </button>
+        <button onclick="switchCategory('bespoke')" data-cat="bespoke" class="nav-tab-btn px-3.5 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-200">
+          02. 비스포크 아틀리에
+        </button>
+        <button onclick="switchCategory('craftsmanship')" data-cat="craftsmanship" class="nav-tab-btn px-3.5 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-200">
+          03. 장인정신
+        </button>
+        <button onclick="switchCategory('experience')" data-cat="experience" class="nav-tab-btn px-3.5 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-200">
+          04. 엔진 사운드
+        </button>
+        <button onclick="switchCategory('membership')" data-cat="membership" class="nav-tab-btn px-3.5 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-200">
+          05. VIP 멤버십
+        </button>
       </nav>
 
-      <!-- CTA & Audio Engine -->
-      <div class="flex items-center gap-4">
-        <!-- Exhaust sound button -->
-        <button id="engineRevBtn" title="V12 배기음 시뮬레이션 청음" class="p-2.5 rounded-full border border-brand-gold/40 hover:border-brand-gold text-brand-gold hover:bg-brand-gold/10 transition-all flex items-center gap-2 text-xs">
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-3">
+        <!-- V12 Quick Sound Button -->
+        <button id="engineRevBtn" title="V12 배기음 시뮬레이션 청음" class="p-2.5 rounded-xl border border-brand-gold/40 hover:border-brand-gold text-brand-gold hover:bg-brand-gold/10 transition-all flex items-center gap-2 text-xs">
           <i data-lucide="volume-2" class="w-4 h-4"></i>
           <span class="hidden sm:inline font-mono">V12 SOUND</span>
         </button>
 
-        <a href="#booking" class="relative group overflow-hidden px-5 py-2.5 rounded-xl bg-brand-gold-gradient text-black font-semibold text-xs tracking-wider uppercase hover:shadow-[0_0_25px_rgba(212,175,55,0.6)] transition-all duration-300 transform hover:-translate-y-0.5">
-          <span class="relative z-10 flex items-center gap-1.5">
-            <span>시승 및 상담 예약</span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-          </span>
-        </a>
+        <!-- Booking Direct CTA -->
+        <button onclick="switchCategory('booking')" class="px-4 py-2.5 rounded-xl bg-brand-gold-gradient text-black font-semibold text-xs tracking-wider uppercase hover:shadow-[0_0_20px_rgba(212,175,55,0.6)] transition-all duration-300 transform hover:-translate-y-0.5 flex items-center gap-1.5">
+          <span>시승 및 상담</span>
+          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+        </button>
 
         <!-- Mobile Menu Toggle Button -->
-        <button id="mobileMenuBtn" class="lg:hidden p-2 text-gray-300 hover:text-white">
+        <button id="mobileMenuBtn" class="xl:hidden p-2 text-gray-300 hover:text-white rounded-lg hover:bg-white/5">
           <i data-lucide="menu" class="w-6 h-6"></i>
         </button>
       </div>
     </div>
 
     <!-- Mobile Drawer Menu -->
-    <div id="mobileMenu" class="hidden lg:hidden max-w-7xl mx-auto mt-2 glass-luxury rounded-2xl p-6 shadow-2xl border border-brand-gold/20 flex flex-col gap-4 text-center">
-      <a href="#models" class="py-2 text-gray-200 hover:text-brand-gold mobile-nav-link">컬렉션 (Models)</a>
-      <a href="#bespoke" class="py-2 text-gray-200 hover:text-brand-gold mobile-nav-link">비스포크 아틀리에 (Bespoke)</a>
-      <a href="#craftsmanship" class="py-2 text-gray-200 hover:text-brand-gold mobile-nav-link">장인정신 (Heritage)</a>
-      <a href="#membership" class="py-2 text-gray-200 hover:text-brand-gold mobile-nav-link">VIP 멤버십</a>
-      <a href="#experience" class="py-2 text-gray-200 hover:text-brand-gold mobile-nav-link">엔진 사운드 익스피리언스</a>
-      <a href="#booking" class="w-full py-3 rounded-xl bg-brand-gold-gradient text-black font-bold text-sm tracking-wider uppercase mobile-nav-link">VIP 시승 신청</a>
+    <div id="mobileMenu" class="hidden xl:hidden max-w-7xl mx-auto mt-3 pt-3 border-t border-white/10 flex flex-col gap-2 text-sm">
+      <button onclick="switchCategory('home'); closeMobileMenu();" class="w-full text-left py-2.5 px-4 rounded-xl text-gray-200 hover:bg-white/10 flex items-center justify-between">
+        <span>홈 (사이트 소개 & 카테고리 허브)</span>
+        <i data-lucide="home" class="w-4 h-4 text-brand-gold"></i>
+      </button>
+      <button onclick="switchCategory('models'); closeMobileMenu();" class="w-full text-left py-2.5 px-4 rounded-xl text-gray-200 hover:bg-white/10 flex items-center justify-between">
+        <span>01. 플래그십 컬렉션 (Models)</span>
+        <i data-lucide="car" class="w-4 h-4 text-brand-gold"></i>
+      </button>
+      <button onclick="switchCategory('bespoke'); closeMobileMenu();" class="w-full text-left py-2.5 px-4 rounded-xl text-gray-200 hover:bg-white/10 flex items-center justify-between">
+        <span>02. 비스포크 아틀리에 (3D Configurator)</span>
+        <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i>
+      </button>
+      <button onclick="switchCategory('craftsmanship'); closeMobileMenu();" class="w-full text-left py-2.5 px-4 rounded-xl text-gray-200 hover:bg-white/10 flex items-center justify-between">
+        <span>03. 장인정신 & 헤리티지 (Heritage)</span>
+        <i data-lucide="shield-check" class="w-4 h-4 text-brand-gold"></i>
+      </button>
+      <button onclick="switchCategory('experience'); closeMobileMenu();" class="w-full text-left py-2.5 px-4 rounded-xl text-gray-200 hover:bg-white/10 flex items-center justify-between">
+        <span>04. V12 사운드 익스피리언스 (Sound)</span>
+        <i data-lucide="volume-2" class="w-4 h-4 text-brand-gold"></i>
+      </button>
+      <button onclick="switchCategory('membership'); closeMobileMenu();" class="w-full text-left py-2.5 px-4 rounded-xl text-gray-200 hover:bg-white/10 flex items-center justify-between">
+        <span>05. VIP 멤버십 & 특권 (Privilege)</span>
+        <i data-lucide="crown" class="w-4 h-4 text-brand-gold"></i>
+      </button>
+      <button onclick="switchCategory('booking'); closeMobileMenu();" class="w-full text-left py-2.5 px-4 rounded-xl bg-brand-gold text-black font-bold flex items-center justify-between mt-1">
+        <span>06. VIP 프라이빗 시승 예약</span>
+        <i data-lucide="calendar" class="w-4 h-4"></i>
+      </button>
     </div>
   </header>
 
-  <!-- HERO SECTION -->
-  <section class="relative min-h-screen flex items-center justify-center pt-28 pb-20 overflow-hidden bg-dark-radial">
-    <!-- Ambient Background Light Orbs -->
-    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-brand-gold/10 blur-[150px] rounded-full pointer-events-none"></div>
-    <div class="absolute bottom-10 left-10 w-[400px] h-[400px] bg-amber-700/5 blur-[120px] rounded-full pointer-events-none"></div>
+  <!-- ======================================================== -->
+  <!-- CATEGORY 0: HOME VIEW (브랜드 소개 & 카테고리 허브 나열 화면) -->
+  <!-- ======================================================== -->
+  <main id="view-home" class="category-view animate-fade-in block">
+    
+    <!-- Hero Introduction -->
+    <section class="relative pt-16 pb-20 px-6 overflow-hidden bg-dark-radial border-b border-white/5">
+      <!-- Glow effect -->
+      <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-brand-gold/10 blur-[160px] rounded-full pointer-events-none"></div>
 
-    <!-- Background Cinematic Imagery with gradient overlay -->
-    <div class="absolute inset-0 z-0 opacity-40">
-      <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=2000&q=85" alt="Aurelia Sovereign Flagship" class="w-full h-full object-cover object-center scale-105 animate-float filter brightness-75">
-      <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/70 to-transparent"></div>
-      <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-transparent to-brand-dark"></div>
+      <!-- Hero Background Image -->
+      <div class="absolute inset-0 z-0 opacity-30">
+        <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=2000&q=85" alt="Aurelia Sovereign Flagship" class="w-full h-full object-cover object-center filter brightness-75">
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/80 to-transparent"></div>
+      </div>
+
+      <div class="relative z-10 max-w-5xl mx-auto text-center">
+        <!-- Brand Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-luxury border border-brand-gold/30 mb-6 backdrop-blur-md">
+          <span class="w-2 h-2 rounded-full bg-brand-gold animate-ping"></span>
+          <span class="font-brand-title text-xs uppercase tracking-[0.25em] text-brand-goldLight">AURELIA AUTOMOBILI PRIVÉ</span>
+        </div>
+
+        <h1 class="font-brand-title text-4xl sm:text-6xl lg:text-7xl font-black tracking-wider leading-tight text-white mb-6 uppercase">
+          타협 없는 우아함,<br>
+          <span class="text-gold-shine">궁극의 마스터피스</span>
+        </h1>
+
+        <!-- Brief Site Introduction -->
+        <p class="max-w-3xl mx-auto text-base sm:text-lg text-gray-300 font-light leading-relaxed mb-10 tracking-wide">
+          AURELIA 공식 디지털 플래그십에 오신 것을 환영합니다.<br class="hidden sm:inline">
+          1,020마력 V12 하이브리드 파워트레인과 450시간 수작업 비스포크 아틀리에의 진수를 선보입니다.<br>
+          <strong class="text-brand-gold font-medium">아래 원하시는 카테고리를 선택하시면 각 섹션별 상세 콘텐츠를 확인하실 수 있습니다.</strong>
+        </p>
+
+        <!-- KPI Specs Ticker Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto glass-luxury p-5 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl mb-4">
+          <div class="border-r border-white/10 last:border-none p-2 text-center">
+            <div class="font-brand-title text-2xl sm:text-3xl font-bold text-gold-shine">2.7<span class="text-xs text-brand-goldLight ml-1">SEC</span></div>
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">0 - 100 km/h 가속</p>
+          </div>
+          <div class="border-r border-white/10 last:border-none p-2 text-center">
+            <div class="font-brand-title text-2xl sm:text-3xl font-bold text-white">1,020<span class="text-xs text-brand-gold ml-1">HP</span></div>
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">V12 Twin-Turbo Hybrid</p>
+          </div>
+          <div class="border-r border-white/10 last:border-none p-2 text-center">
+            <div class="font-brand-title text-2xl sm:text-3xl font-bold text-gold-shine">355<span class="text-xs text-brand-goldLight ml-1">KM/H</span></div>
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">최고 안전 속도</p>
+          </div>
+          <div class="p-2 text-center">
+            <div class="font-brand-title text-2xl sm:text-3xl font-bold text-white">1 of 50</div>
+            <p class="text-[10px] text-brand-gold uppercase tracking-widest mt-1">전 세계 한정 생산 에디션</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEGORY NAVIGATION HUB (카테고리 나열 그리드) -->
+    <section class="py-20 px-6 max-w-7xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <span class="font-brand-title text-xs tracking-[0.3em] text-brand-gold uppercase block mb-2">CATEGORY NAVIGATION</span>
+        <h2 class="font-brand-title text-3xl sm:text-4xl font-bold text-white tracking-wider mb-3">
+          탐색할 카테고리를 선택하세요
+        </h2>
+        <p class="text-gray-400 text-sm font-light">
+          원하는 카테고리 카드를 클릭하시면 해당 카테고리의 전용 페이지로 즉시 이동합니다.
+        </p>
+      </div>
+
+      <!-- Category Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Category Card 1: Models -->
+        <div onclick="switchCategory('models')" class="category-card cursor-pointer group bg-brand-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold p-6 flex flex-col justify-between shadow-xl">
+          <div>
+            <div class="relative h-44 rounded-xl overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80" alt="Models Collection" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] tracking-widest font-mono font-bold bg-brand-gold text-black">CATEGORY 01</span>
+            </div>
+            <h3 class="font-brand-title text-xl font-bold text-white group-hover:text-brand-gold transition-colors mb-2">
+              플래그십 컬렉션 (Models)
+            </h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-6">
+              Sovereign GT, Phantom Royale, Chronos E-Hyper 등 2026 플래그십 차량 라인업과 상세 제원 스펙을 확인하세요.
+            </p>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/10 text-xs font-semibold text-brand-gold group-hover:translate-x-1 transition-transform">
+            <span>컬렉션 상세 보기</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Category Card 2: Bespoke -->
+        <div onclick="switchCategory('bespoke')" class="category-card cursor-pointer group bg-brand-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold p-6 flex flex-col justify-between shadow-xl">
+          <div>
+            <div class="relative h-44 rounded-xl overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80" alt="Bespoke Studio" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] tracking-widest font-mono font-bold bg-brand-gold text-black">CATEGORY 02</span>
+            </div>
+            <h3 class="font-brand-title text-xl font-bold text-white group-hover:text-brand-gold transition-colors mb-2">
+              비스포크 아틀리에 (Bespoke)
+            </h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-6">
+              외장 컬러, 단조 휠, 최고급 나파 가죽 인테리어를 직접 조합하고 나만의 고유 주문 코드와 견적을 산출해 보세요.
+            </p>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/10 text-xs font-semibold text-brand-gold group-hover:translate-x-1 transition-transform">
+            <span>3D 비스포크 구성기 체험</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Category Card 3: Craftsmanship -->
+        <div onclick="switchCategory('craftsmanship')" class="category-card cursor-pointer group bg-brand-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold p-6 flex flex-col justify-between shadow-xl">
+          <div>
+            <div class="relative h-44 rounded-xl overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80" alt="Craftsmanship" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] tracking-widest font-mono font-bold bg-brand-gold text-black">CATEGORY 03</span>
+            </div>
+            <h3 class="font-brand-title text-xl font-bold text-white group-hover:text-brand-gold transition-colors mb-2">
+              장인정신 & 헤리티지 (Heritage)
+            </h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-6">
+              450시간의 수작업 공정, 항공우주 규격 풀 카본 모노코크 샤시, 뉴럴 AI 매직 서스펜션의 비하인드 스토리를 전합니다.
+            </p>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/10 text-xs font-semibold text-brand-gold group-hover:translate-x-1 transition-transform">
+            <span>헤리티지 스토리 보기</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Category Card 4: Sound -->
+        <div onclick="switchCategory('experience')" class="category-card cursor-pointer group bg-brand-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold p-6 flex flex-col justify-between shadow-xl">
+          <div>
+            <div class="relative h-44 rounded-xl overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=800&q=80" alt="V12 Sound" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] tracking-widest font-mono font-bold bg-brand-gold text-black">CATEGORY 04</span>
+            </div>
+            <h3 class="font-brand-title text-xl font-bold text-white group-hover:text-brand-gold transition-colors mb-2">
+              엔진 사운드 익스피리언스 (Sound)
+            </h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-6">
+              Web Audio API 신디사이저로 구현된 6.5L V12 자연흡기 가속 로어(Roar) 사운드 및 아이들링 배기음을 청음해 보세요.
+            </p>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/10 text-xs font-semibold text-brand-gold group-hover:translate-x-1 transition-transform">
+            <span>V12 사운드 청음하기</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Category Card 5: Membership -->
+        <div onclick="switchCategory('membership')" class="category-card cursor-pointer group bg-brand-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold p-6 flex flex-col justify-between shadow-xl">
+          <div>
+            <div class="relative h-44 rounded-xl overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80" alt="VIP Membership" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] tracking-widest font-mono font-bold bg-brand-gold text-black">CATEGORY 05</span>
+            </div>
+            <h3 class="font-brand-title text-xl font-bold text-white group-hover:text-brand-gold transition-colors mb-2">
+              VIP 멤버십 & 특권 (Privilege)
+            </h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-6">
+              24/7 전담 버틀러 픽업 앤 딜리버리 케어, 전 세계 프라이빗 클럽 라운지 프리패스 및 10년 안심 무상 워런티 혜택.
+            </p>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/10 text-xs font-semibold text-brand-gold group-hover:translate-x-1 transition-transform">
+            <span>오너십 특권 확인하기</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+        <!-- Category Card 6: Booking -->
+        <div onclick="switchCategory('booking')" class="category-card cursor-pointer group bg-brand-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold p-6 flex flex-col justify-between shadow-xl">
+          <div>
+            <div class="relative h-44 rounded-xl overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80" alt="Private Booking" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] tracking-widest font-mono font-bold bg-brand-gold text-black">CATEGORY 06</span>
+            </div>
+            <h3 class="font-brand-title text-xl font-bold text-white group-hover:text-brand-gold transition-colors mb-2">
+              VIP 시승 & 살롱 예약 (Booking)
+            </h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-6">
+              서울 청담, 부산 마린시티, 제주 프라이빗 살롱 1:1 시승을 신청하고 고유 시리얼이 부여된 공식 골드 VIP 패스를 발급받으세요.
+            </p>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/10 text-xs font-semibold text-brand-gold group-hover:translate-x-1 transition-transform">
+            <span>프라이빗 시승 신청하기</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ======================================================== -->
+  <!-- CATEGORY 1: 플래그십 컬렉션 (Models Dedicated View) -->
+  <!-- ======================================================== -->
+  <main id="view-models" class="category-view animate-fade-in hidden">
+    
+    <!-- Category Top Breadcrumb Banner -->
+    <div class="bg-[#121217] border-b border-brand-gold/30 py-4 px-6">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button onclick="switchCategory('home')" class="px-3.5 py-1.5 rounded-xl border border-white/20 hover:border-brand-gold text-xs font-medium text-gray-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>전체 카테고리로 돌아가기</span>
+          </button>
+          <span class="text-gray-500">|</span>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-brand-gold"></span>
+            <span class="text-xs uppercase font-mono tracking-wider text-brand-gold font-bold">CATEGORY 01</span>
+            <span class="text-sm font-bold text-white">플래그십 컬렉션 (Models Lineup)</span>
+          </div>
+        </div>
+        <span class="text-xs text-gray-400 hidden md:inline">현재 카테고리의 모델별 세부 제원과 옵션을 확인하고 계십니다.</span>
+      </div>
     </div>
 
-    <!-- Hero Content -->
-    <div class="relative z-10 max-w-7xl mx-auto px-6 text-center mt-12">
-      <!-- Badge -->
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-luxury border border-brand-gold/30 mb-8 backdrop-blur-md">
-        <span class="w-2 h-2 rounded-full bg-brand-gold animate-ping"></span>
-        <span class="font-brand-title text-xs uppercase tracking-[0.25em] text-brand-goldLight">Flagship Gran Turismo 2026</span>
-      </div>
-
-      <!-- Main Headline -->
-      <h1 class="font-brand-title text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-wider leading-none text-white mb-6 uppercase">
-        타협 없는 우아함,<br>
-        <span class="text-gold-shine">궁극의 마스터피스</span>
-      </h1>
-
-      <p class="max-w-2xl mx-auto text-base sm:text-lg text-gray-300 font-light leading-relaxed mb-10 tracking-wide">
-        단 1%의 소수만을 위해 설계된 하이퍼 럭셔리 그랜드 투어러. 수작업 비스포크 아틀리에와 1,020마력 V12 하이브리드 파워트레인이 선사하는 압도적 품격을 경험하십시오.
-      </p>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-5 mb-16">
-        <a href="#booking" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-gold-gradient text-black font-bold tracking-widest text-sm uppercase hover:shadow-[0_0_35px_rgba(212,175,55,0.7)] transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
-          <span>VIP 프라이빗 시승 예약</span>
-          <i data-lucide="chevron-right" class="w-4 h-4"></i>
-        </a>
-        <a href="#bespoke" class="w-full sm:w-auto px-8 py-4 rounded-xl glass-luxury border border-brand-gold/40 hover:border-brand-gold text-white font-medium tracking-widest text-sm uppercase hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2">
-          <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i>
-          <span>3D 비스포크 스튜디오 체험</span>
-        </a>
-      </div>
-
-      <!-- Live Specs KPI Bar -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto glass-luxury p-6 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-xl">
-        <div class="border-r border-white/10 last:border-none p-2 text-center">
-          <div class="font-brand-title text-2xl sm:text-4xl font-bold text-gold-shine">2.7<span class="text-xs text-brand-goldLight ml-1">SEC</span></div>
-          <p class="text-[11px] text-gray-400 uppercase tracking-widest mt-1">0 - 100 km/h 가속</p>
-        </div>
-        <div class="border-r border-white/10 last:border-none p-2 text-center">
-          <div class="font-brand-title text-2xl sm:text-4xl font-bold text-white">1,020<span class="text-xs text-brand-gold ml-1">HP</span></div>
-          <p class="text-[11px] text-gray-400 uppercase tracking-widest mt-1">V12 Twin-Turbo Hybrid</p>
-        </div>
-        <div class="border-r border-white/10 last:border-none p-2 text-center">
-          <div class="font-brand-title text-2xl sm:text-4xl font-bold text-gold-shine">355<span class="text-xs text-brand-goldLight ml-1">KM/H</span></div>
-          <p class="text-[11px] text-gray-400 uppercase tracking-widest mt-1">최고 안전 속도</p>
-        </div>
-        <div class="p-2 text-center">
-          <div class="font-brand-title text-2xl sm:text-4xl font-bold text-white">1 of 50</div>
-          <p class="text-[11px] text-brand-gold uppercase tracking-widest mt-1">전 세계 한정 생산 에디션</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Scroll down indicator -->
-    <a href="#models" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-gray-400 hover:text-brand-gold flex flex-col items-center gap-2 text-xs tracking-widest uppercase transition-colors">
-      <span>EXPLORE</span>
-      <i data-lucide="chevrons-down" class="w-4 h-4 animate-bounce text-brand-gold"></i>
-    </a>
-  </section>
-
-  <!-- MODEL LINEUP / SHOWCASE SECTION -->
-  <section id="models" class="py-28 px-6 bg-brand-dark relative border-t border-white/5">
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center max-w-3xl mx-auto mb-16">
-        <span class="font-brand-title text-xs tracking-[0.3em] text-brand-gold uppercase block mb-3">EXCLUSIVE PORTFOLIO</span>
-        <h2 class="font-brand-title text-3xl sm:text-5xl font-bold text-white tracking-wider mb-5">
+    <!-- Models Main Content -->
+    <section class="py-16 px-6 max-w-7xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <h2 class="font-brand-title text-3xl sm:text-5xl font-bold text-white tracking-wider mb-4">
           2026 플래그십 라인업
         </h2>
         <p class="text-gray-400 text-sm sm:text-base font-light">
@@ -265,11 +474,10 @@
       </div>
 
       <!-- Car Cards Grid -->
-      <div id="carCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div id="carCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         
-        <!-- CARD 1: Aurelia Sovereign GT -->
+        <!-- CARD 1: Sovereign GT -->
         <div class="car-card group relative bg-brand-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold/60 transition-all duration-500 hover:-translate-y-2 shadow-2xl flex flex-col" data-category="gt">
-          <!-- Image Container -->
           <div class="relative h-64 overflow-hidden">
             <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1000&q=80" alt="Aurelia Sovereign GT" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
             <div class="absolute inset-0 bg-gradient-to-t from-brand-card via-transparent to-transparent"></div>
@@ -277,7 +485,6 @@
             <span class="absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] tracking-widest font-mono text-white glass-luxury border border-white/20">V12 6.5L Bi-Turbo</span>
           </div>
 
-          <!-- Content Body -->
           <div class="p-6 flex-1 flex flex-col justify-between">
             <div>
               <div class="flex items-baseline justify-between mb-2">
@@ -288,7 +495,6 @@
                 장거리 고속 주행에서도 완벽한 안락함과 폭발적인 가속력을 제공하는 럭셔리 쿠페의 정점.
               </p>
 
-              <!-- Specs Mini Grid -->
               <div class="grid grid-cols-3 gap-2 py-3 border-y border-white/10 text-center mb-6">
                 <div>
                   <div class="font-brand-title text-sm font-bold text-white">880 HP</div>
@@ -305,7 +511,6 @@
               </div>
             </div>
 
-            <!-- Card Actions -->
             <div class="flex items-center gap-3 pt-2">
               <button onclick="openSpecModal('sovereign')" class="flex-1 py-2.5 rounded-lg border border-brand-gold/40 hover:border-brand-gold text-xs tracking-wider uppercase text-brand-goldLight hover:bg-brand-gold/10 transition-colors">
                 상세 스펙 확인
@@ -317,7 +522,7 @@
           </div>
         </div>
 
-        <!-- CARD 2: Aurelia Phantom Royale -->
+        <!-- CARD 2: Phantom Royale -->
         <div class="car-card group relative bg-brand-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold/60 transition-all duration-500 hover:-translate-y-2 shadow-2xl flex flex-col" data-category="limousine">
           <div class="relative h-64 overflow-hidden">
             <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1000&q=80" alt="Aurelia Phantom Royale" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
@@ -363,7 +568,7 @@
           </div>
         </div>
 
-        <!-- CARD 3: Aurelia Chronos E-Hyper -->
+        <!-- CARD 3: Chronos E-Hyper -->
         <div class="car-card group relative bg-brand-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold/60 transition-all duration-500 hover:-translate-y-2 shadow-2xl flex flex-col" data-category="electric">
           <div class="relative h-64 overflow-hidden">
             <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1000&q=80" alt="Aurelia Chronos E-Hyper" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
@@ -410,18 +615,49 @@
         </div>
 
       </div>
+
+      <!-- Category Bottom Navigation Controls -->
+      <div class="glass-luxury p-6 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <button onclick="switchCategory('home')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="grid" class="w-4 h-4 text-brand-gold"></i>
+          <span>카테고리 전체 목록으로 돌아가기</span>
+        </button>
+        <button onclick="switchCategory('bespoke')" class="px-5 py-2.5 rounded-xl bg-brand-gold text-black font-bold text-xs uppercase tracking-wider hover:bg-brand-goldLight transition-colors flex items-center gap-2">
+          <span>다음 카테고리: 비스포크 아틀리에 &rarr;</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ======================================================== -->
+  <!-- CATEGORY 2: 비스포크 아틀리에 (Bespoke Dedicated View) -->
+  <!-- ======================================================== -->
+  <main id="view-bespoke" class="category-view animate-fade-in hidden">
+    
+    <!-- Category Top Breadcrumb Banner -->
+    <div class="bg-[#121217] border-b border-brand-gold/30 py-4 px-6">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button onclick="switchCategory('home')" class="px-3.5 py-1.5 rounded-xl border border-white/20 hover:border-brand-gold text-xs font-medium text-gray-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>전체 카테고리로 돌아가기</span>
+          </button>
+          <span class="text-gray-500">|</span>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-brand-gold"></span>
+            <span class="text-xs uppercase font-mono tracking-wider text-brand-gold font-bold">CATEGORY 02</span>
+            <span class="text-sm font-bold text-white">비스포크 아틀리에 (Bespoke Configurator)</span>
+          </div>
+        </div>
+        <span class="text-xs text-gray-400 hidden md:inline">나만의 맞춤 컬러와 가죽, 휠 옵션을 실시간 조합하고 계십니다.</span>
+      </div>
     </div>
-  </section>
 
-  <!-- INTERACTIVE BESPOKE ATELIER (CONFIGURATOR) -->
-  <section id="bespoke" class="py-28 px-6 relative bg-gradient-to-b from-brand-dark via-[#101015] to-brand-dark border-t border-white/5">
-    <!-- Glow element -->
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-brand-gold/5 blur-[160px] pointer-events-none"></div>
-
-    <div class="max-w-7xl mx-auto relative z-10">
-      <div class="text-center max-w-3xl mx-auto mb-16">
-        <span class="font-brand-title text-xs tracking-[0.3em] text-brand-gold uppercase block mb-3">BESPOKE ATELIER</span>
-        <h2 class="font-brand-title text-3xl sm:text-5xl font-bold text-white tracking-wider mb-5">
+    <!-- Bespoke Main Content -->
+    <section class="py-16 px-6 max-w-7xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <h2 class="font-brand-title text-3xl sm:text-5xl font-bold text-white tracking-wider mb-4">
           당신만의 오트쿠튀르 자동차
         </h2>
         <p class="text-gray-400 text-sm sm:text-base font-light">
@@ -430,18 +666,15 @@
       </div>
 
       <!-- Configurator Studio Box -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-brand-card/90 rounded-3xl p-6 md:p-10 border border-brand-gold/25 shadow-2xl backdrop-blur-2xl">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-brand-card/90 rounded-3xl p-6 md:p-10 border border-brand-gold/25 shadow-2xl backdrop-blur-2xl mb-16">
         
         <!-- Interactive Preview Area (Left: 7 cols) -->
         <div class="lg:col-span-7 flex flex-col justify-between">
-          <!-- Car Display Screen -->
           <div class="relative w-full h-80 sm:h-96 rounded-2xl overflow-hidden border border-white/10 group bg-black/60 shadow-inner flex items-center justify-center">
-            <!-- Simulated Glow Behind Car -->
             <div id="carHaloGlow" class="absolute w-72 h-72 rounded-full blur-[80px] bg-amber-500/20 transition-all duration-700 pointer-events-none"></div>
             
             <img id="customCarImg" src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1200&q=80" alt="Bespoke Studio Preview" class="w-full h-full object-cover transition-opacity duration-500 filter brightness-95">
 
-            <!-- Real-time badges -->
             <div class="absolute top-4 left-4 flex flex-col gap-2">
               <span id="selectedModelBadge" class="px-3 py-1 rounded-full text-[10px] tracking-widest font-bold uppercase bg-brand-gold text-black shadow-lg">AURELIA SOVEREIGN</span>
               <span id="selectedColorBadge" class="px-3 py-1 rounded-full text-[10px] tracking-widest font-mono text-white glass-luxury border border-white/20">Obsidian Black Metallic</span>
@@ -537,20 +770,59 @@
               <div class="text-[10px] text-brand-gold font-mono" id="configCodeDisplay">CODE: AUR-GT-2026-X88</div>
             </div>
             <button onclick="copyAndBookBespoke()" class="px-5 py-3 rounded-xl bg-brand-gold text-black font-bold text-xs uppercase tracking-wider hover:bg-brand-goldLight transition-colors flex items-center gap-1.5 shadow-lg">
-              <span>견적 저장 & 상담</span>
+              <span>견적 저장 & 시승 예약</span>
               <i data-lucide="check" class="w-4 h-4"></i>
             </button>
           </div>
 
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- CRAFTSMANSHIP & HERITAGE (장인정신) -->
-  <section id="craftsmanship" class="py-28 px-6 bg-brand-dark relative border-t border-white/5">
-    <div class="max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <!-- Category Bottom Navigation Controls -->
+      <div class="glass-luxury p-6 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <button onclick="switchCategory('models')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="chevron-left" class="w-4 h-4 text-brand-gold"></i>
+          <span>이전 카테고리: 01. 플래그십 컬렉션</span>
+        </button>
+        <button onclick="switchCategory('home')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="grid" class="w-4 h-4 text-brand-gold"></i>
+          <span>카테고리 전체 목록 (홈)</span>
+        </button>
+        <button onclick="switchCategory('craftsmanship')" class="px-5 py-2.5 rounded-xl bg-brand-gold text-black font-bold text-xs uppercase tracking-wider hover:bg-brand-goldLight transition-colors flex items-center gap-2">
+          <span>다음 카테고리: 03. 장인정신 &rarr;</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ======================================================== -->
+  <!-- CATEGORY 3: 장인정신 & 헤리티지 (Heritage Dedicated View) -->
+  <!-- ======================================================== -->
+  <main id="view-craftsmanship" class="category-view animate-fade-in hidden">
+    
+    <!-- Category Top Breadcrumb Banner -->
+    <div class="bg-[#121217] border-b border-brand-gold/30 py-4 px-6">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button onclick="switchCategory('home')" class="px-3.5 py-1.5 rounded-xl border border-white/20 hover:border-brand-gold text-xs font-medium text-gray-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>전체 카테고리로 돌아가기</span>
+          </button>
+          <span class="text-gray-500">|</span>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-brand-gold"></span>
+            <span class="text-xs uppercase font-mono tracking-wider text-brand-gold font-bold">CATEGORY 03</span>
+            <span class="text-sm font-bold text-white">장인정신 & 헤리티지 (Heritage & Engineering)</span>
+          </div>
+        </div>
+        <span class="text-xs text-gray-400 hidden md:inline">수작업 아틀리에와 F1 카본 모노코크 공학을 확인하고 계십니다.</span>
+      </div>
+    </div>
+
+    <!-- Craftsmanship Main Content -->
+    <section class="py-16 px-6 max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16">
         <!-- Visual Composition -->
         <div class="relative">
           <div class="relative z-10 rounded-3xl overflow-hidden border border-brand-gold/30 shadow-2xl">
@@ -615,27 +887,65 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- AUDIO EXPERIENCE / SOUND SIMULATOR -->
-  <section id="experience" class="py-24 px-6 bg-gradient-to-r from-[#0c0d12] via-[#14151e] to-[#0c0d12] relative border-t border-b border-brand-gold/20">
-    <div class="max-w-5xl mx-auto text-center">
+      <!-- Category Bottom Navigation Controls -->
+      <div class="glass-luxury p-6 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <button onclick="switchCategory('bespoke')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="chevron-left" class="w-4 h-4 text-brand-gold"></i>
+          <span>이전 카테고리: 02. 비스포크 아틀리에</span>
+        </button>
+        <button onclick="switchCategory('home')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="grid" class="w-4 h-4 text-brand-gold"></i>
+          <span>카테고리 전체 목록 (홈)</span>
+        </button>
+        <button onclick="switchCategory('experience')" class="px-5 py-2.5 rounded-xl bg-brand-gold text-black font-bold text-xs uppercase tracking-wider hover:bg-brand-goldLight transition-colors flex items-center gap-2">
+          <span>다음 카테고리: 04. 엔진 사운드 &rarr;</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ======================================================== -->
+  <!-- CATEGORY 4: 엔진 사운드 익스피리언스 (Sound Dedicated View) -->
+  <!-- ======================================================== -->
+  <main id="view-experience" class="category-view animate-fade-in hidden">
+    
+    <!-- Category Top Breadcrumb Banner -->
+    <div class="bg-[#121217] border-b border-brand-gold/30 py-4 px-6">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button onclick="switchCategory('home')" class="px-3.5 py-1.5 rounded-xl border border-white/20 hover:border-brand-gold text-xs font-medium text-gray-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>전체 카테고리로 돌아가기</span>
+          </button>
+          <span class="text-gray-500">|</span>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-brand-gold"></span>
+            <span class="text-xs uppercase font-mono tracking-wider text-brand-gold font-bold">CATEGORY 04</span>
+            <span class="text-sm font-bold text-white">엔진 사운드 익스피리언스 (Acoustic Simulator)</span>
+          </div>
+        </div>
+        <span class="text-xs text-gray-400 hidden md:inline">V12 파워트레인의 배기음과 아이들링 사운드를 청음하고 계십니다.</span>
+      </div>
+    </div>
+
+    <!-- Sound Main Content -->
+    <section class="py-20 px-6 max-w-4xl mx-auto text-center">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-xs uppercase tracking-widest mb-4">
         <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
         <span>ACOUSTIC EMOTION SIMULATOR</span>
       </div>
-      <h2 class="font-brand-title text-3xl sm:text-4xl font-bold text-white mb-4">
-        V12 자연흡기 & 하이브리드 배기음 체험
+      <h2 class="font-brand-title text-3xl sm:text-5xl font-bold text-white mb-4">
+        V12 자연흡기 & 하이브리드 배기음
       </h2>
-      <p class="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto mb-8 font-light">
+      <p class="text-gray-400 text-sm max-w-xl mx-auto mb-10 font-light">
         AURELIA의 6.5리터 V12 엔진이 뿜어내는 가슴 뛰는 사운드트랙을 Web Audio 신디사이저로 청음해 보세요.
       </p>
 
       <!-- Sound Controller Pad -->
-      <div class="glass-luxury p-8 rounded-3xl border border-brand-gold/30 max-w-lg mx-auto shadow-2xl relative overflow-hidden">
-        <div id="soundWaveVisualizer" class="h-16 flex items-center justify-center gap-1.5 mb-6 opacity-60">
-          <!-- Dynamic Animated Audio Bars -->
+      <div class="glass-luxury p-8 sm:p-12 rounded-3xl border border-brand-gold/30 max-w-xl mx-auto shadow-2xl relative overflow-hidden mb-16">
+        <div id="soundWaveVisualizer" class="h-16 flex items-center justify-center gap-1.5 mb-8 opacity-60">
           <span class="w-1.5 bg-brand-gold rounded-full h-3 transition-all duration-150 bar"></span>
           <span class="w-1.5 bg-brand-gold rounded-full h-6 transition-all duration-150 bar"></span>
           <span class="w-1.5 bg-brand-gold rounded-full h-10 transition-all duration-150 bar"></span>
@@ -658,16 +968,54 @@
             <span>아이들링 (IDLE) 모드</span>
           </button>
         </div>
-        <p class="text-[10px] text-gray-500 mt-4 font-mono">* 최상의 경험을 위해 오디오 볼륨을 켜주세요</p>
+        <p class="text-[10px] text-gray-500 mt-5 font-mono">* 웹 브라우저 볼륨을 켜시면 가장 생생하게 들으실 수 있습니다</p>
+      </div>
+
+      <!-- Category Bottom Navigation Controls -->
+      <div class="glass-luxury p-6 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <button onclick="switchCategory('craftsmanship')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="chevron-left" class="w-4 h-4 text-brand-gold"></i>
+          <span>이전 카테고리: 03. 장인정신</span>
+        </button>
+        <button onclick="switchCategory('home')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="grid" class="w-4 h-4 text-brand-gold"></i>
+          <span>카테고리 전체 목록 (홈)</span>
+        </button>
+        <button onclick="switchCategory('membership')" class="px-5 py-2.5 rounded-xl bg-brand-gold text-black font-bold text-xs uppercase tracking-wider hover:bg-brand-goldLight transition-colors flex items-center gap-2">
+          <span>다음 카테고리: 05. VIP 멤버십 &rarr;</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ======================================================== -->
+  <!-- CATEGORY 5: VIP 멤버십 & 특권 (Membership Dedicated View) -->
+  <!-- ======================================================== -->
+  <main id="view-membership" class="category-view animate-fade-in hidden">
+    
+    <!-- Category Top Breadcrumb Banner -->
+    <div class="bg-[#121217] border-b border-brand-gold/30 py-4 px-6">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button onclick="switchCategory('home')" class="px-3.5 py-1.5 rounded-xl border border-white/20 hover:border-brand-gold text-xs font-medium text-gray-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>전체 카테고리로 돌아가기</span>
+          </button>
+          <span class="text-gray-500">|</span>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-brand-gold"></span>
+            <span class="text-xs uppercase font-mono tracking-wider text-brand-gold font-bold">CATEGORY 05</span>
+            <span class="text-sm font-bold text-white">VIP 멤버십 & 특권 (Privileges & Concierge)</span>
+          </div>
+        </div>
+        <span class="text-xs text-gray-400 hidden md:inline">오너만을 위한 24/7 버틀러 케어와 프라이빗 클럽 혜택을 확인하고 계십니다.</span>
       </div>
     </div>
-  </section>
 
-  <!-- VIP PRIVILEGES & MEMBERSHIP -->
-  <section id="membership" class="py-28 px-6 bg-brand-dark relative">
-    <div class="max-w-7xl mx-auto">
+    <!-- Membership Main Content -->
+    <section class="py-16 px-6 max-w-7xl mx-auto">
       <div class="text-center max-w-3xl mx-auto mb-16">
-        <span class="font-brand-title text-xs tracking-[0.3em] text-brand-gold uppercase block mb-3">CONCIERGE & PRIVILEGE</span>
         <h2 class="font-brand-title text-3xl sm:text-5xl font-bold text-white tracking-wider mb-5">
           오너십 그 이상의 특권
         </h2>
@@ -676,7 +1024,7 @@
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         <!-- Perk 1 -->
         <div class="glass-luxury p-8 rounded-2xl border border-white/10 hover:border-brand-gold/50 transition-all duration-300 hover:-translate-y-1">
           <div class="w-12 h-12 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center text-brand-gold mb-6">
@@ -714,43 +1062,75 @@
           <span class="text-[11px] text-brand-gold font-semibold uppercase tracking-wider">&bull; 신차 가치 잔존율 85% 보장</span>
         </div>
       </div>
+
+      <!-- Category Bottom Navigation Controls -->
+      <div class="glass-luxury p-6 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <button onclick="switchCategory('experience')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="chevron-left" class="w-4 h-4 text-brand-gold"></i>
+          <span>이전 카테고리: 04. 엔진 사운드</span>
+        </button>
+        <button onclick="switchCategory('home')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="grid" class="w-4 h-4 text-brand-gold"></i>
+          <span>카테고리 전체 목록 (홈)</span>
+        </button>
+        <button onclick="switchCategory('booking')" class="px-5 py-2.5 rounded-xl bg-brand-gold text-black font-bold text-xs uppercase tracking-wider hover:bg-brand-goldLight transition-colors flex items-center gap-2">
+          <span>다음 카테고리: 06. 시승 및 예약 &rarr;</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ======================================================== -->
+  <!-- CATEGORY 6: VIP 시승 & 살롱 예약 (Booking Dedicated View) -->
+  <!-- ======================================================== -->
+  <main id="view-booking" class="category-view animate-fade-in hidden">
+    
+    <!-- Category Top Breadcrumb Banner -->
+    <div class="bg-[#121217] border-b border-brand-gold/30 py-4 px-6">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button onclick="switchCategory('home')" class="px-3.5 py-1.5 rounded-xl border border-white/20 hover:border-brand-gold text-xs font-medium text-gray-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>전체 카테고리로 돌아가기</span>
+          </button>
+          <span class="text-gray-500">|</span>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-brand-gold"></span>
+            <span class="text-xs uppercase font-mono tracking-wider text-brand-gold font-bold">CATEGORY 06</span>
+            <span class="text-sm font-bold text-white">VIP 프라이빗 시승 & 살롱 예약 (Reservation)</span>
+          </div>
+        </div>
+        <span class="text-xs text-gray-400 hidden md:inline">1:1 전담 시니어 컨시어지 매칭 및 공식 VIP 패스를 발급받고 계십니다.</span>
+      </div>
     </div>
-  </section>
 
-  <!-- TEST DRIVE & VIP CONSULTATION FORM (BOOKING SECTION) -->
-  <section id="booking" class="py-28 px-6 bg-gradient-to-t from-black via-brand-dark to-brand-dark relative border-t border-white/5">
-    <!-- Background Decor -->
-    <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-gold/5 blur-[150px] pointer-events-none"></div>
-
-    <div class="max-w-5xl mx-auto relative z-10">
-      <div class="text-center max-w-2xl mx-auto mb-14">
-        <span class="font-brand-title text-xs tracking-[0.3em] text-brand-gold uppercase block mb-3">PRIVATE RESERVATION</span>
+    <!-- Booking Main Content -->
+    <section class="py-16 px-6 max-w-5xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-12">
         <h2 class="font-brand-title text-3xl sm:text-5xl font-bold text-white tracking-wider mb-4">
           VIP 프라이빗 시승 & 살롱 예약
         </h2>
         <p class="text-gray-400 text-sm font-light">
-          1:1 전담 시니어 컨시어지가 완벽히 통제된 프라이빗 트랙 및 VIP 살롱에서 당신을 모십니다.
+          완벽히 통제된 프라이빗 트랙 및 VIP 살롱에서 전담 시니어 컨시어지가 당신을 모십니다.
         </p>
       </div>
 
-      <!-- Booking Card Form -->
-      <div class="glass-luxury rounded-3xl p-8 sm:p-12 border border-brand-gold/30 shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+      <!-- Booking Form Card -->
+      <div class="glass-luxury rounded-3xl p-8 sm:p-12 border border-brand-gold/30 shadow-[0_0_50px_rgba(0,0,0,0.8)] mb-16">
         <form id="reservationForm" onsubmit="handleReservationSubmit(event)" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <!-- Name -->
             <div>
               <label class="block text-xs uppercase tracking-widest text-brand-gold font-semibold mb-2">성함 (Full Name) *</label>
               <input type="text" id="custName" required placeholder="홍길동 대표" class="w-full px-4 py-3.5 rounded-xl bg-black/60 border border-white/15 focus:border-brand-gold focus:outline-none text-white text-sm transition-colors">
             </div>
 
-            <!-- Phone -->
             <div>
               <label class="block text-xs uppercase tracking-widest text-brand-gold font-semibold mb-2">연락처 (Mobile) *</label>
               <input type="tel" id="custPhone" required placeholder="010-0000-0000" class="w-full px-4 py-3.5 rounded-xl bg-black/60 border border-white/15 focus:border-brand-gold focus:outline-none text-white text-sm transition-colors">
             </div>
 
-            <!-- Interested Model -->
             <div>
               <label class="block text-xs uppercase tracking-widest text-brand-gold font-semibold mb-2">희망 관심 모델 (Select Model) *</label>
               <select id="custModel" class="w-full px-4 py-3.5 rounded-xl bg-black/80 border border-white/15 focus:border-brand-gold focus:outline-none text-white text-sm transition-colors">
@@ -761,7 +1141,6 @@
               </select>
             </div>
 
-            <!-- Showroom Salon Location -->
             <div>
               <label class="block text-xs uppercase tracking-widest text-brand-gold font-semibold mb-2">희망 쇼룸 살롱 (Lounge Location) *</label>
               <select id="custLocation" class="w-full px-4 py-3.5 rounded-xl bg-black/80 border border-white/15 focus:border-brand-gold focus:outline-none text-white text-sm transition-colors">
@@ -772,13 +1151,11 @@
               </select>
             </div>
 
-            <!-- Date -->
             <div>
               <label class="block text-xs uppercase tracking-widest text-brand-gold font-semibold mb-2">희망 예약 일시 (Preferred Date) *</label>
               <input type="date" id="custDate" required class="w-full px-4 py-3.5 rounded-xl bg-black/60 border border-white/15 focus:border-brand-gold focus:outline-none text-white text-sm transition-colors">
             </div>
 
-            <!-- Bespoke Code Attached -->
             <div>
               <label class="block text-xs uppercase tracking-widest text-brand-gold font-semibold mb-2">비스포크 컨피규레이터 코드 (선택)</label>
               <input type="text" id="custBespokeCode" placeholder="AUR-GT-2026-X88" class="w-full px-4 py-3.5 rounded-xl bg-black/60 border border-white/15 focus:border-brand-gold focus:outline-none text-white text-sm font-mono transition-colors">
@@ -786,13 +1163,11 @@
 
           </div>
 
-          <!-- Notes -->
           <div>
             <label class="block text-xs uppercase tracking-widest text-brand-gold font-semibold mb-2">요청 사항 및 특별 케어 메모 (Special Requests)</label>
             <textarea id="custNotes" rows="3" placeholder="의전 동승 인원, 선호하는 웰컴 티/샴페인, 프라이빗 보안 요청 등을 적어주십시오." class="w-full px-4 py-3.5 rounded-xl bg-black/60 border border-white/15 focus:border-brand-gold focus:outline-none text-white text-sm transition-colors"></textarea>
           </div>
 
-          <!-- Privacy Agreement -->
           <div class="flex items-center gap-3 pt-2">
             <input type="checkbox" id="privacyCheck" required class="w-4 h-4 rounded accent-brand-gold bg-black border-white/20">
             <label for="privacyCheck" class="text-xs text-gray-400">
@@ -800,98 +1175,91 @@
             </label>
           </div>
 
-          <!-- Submit Button -->
           <button type="submit" class="w-full py-4 rounded-xl bg-brand-gold-gradient text-black font-bold tracking-widest text-sm uppercase hover:shadow-[0_0_35px_rgba(212,175,55,0.8)] transition-all duration-300 transform hover:scale-[1.01] flex items-center justify-center gap-2">
             <i data-lucide="calendar" class="w-4 h-4"></i>
             <span>VIP 프라이빗 시승 예약 확정 신청</span>
           </button>
         </form>
       </div>
-    </div>
-  </section>
 
-  <!-- SHOWROOM LOCATIONS -->
-  <section class="py-20 px-6 bg-[#0a0a0d] border-t border-white/5">
-    <div class="max-w-7xl mx-auto">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
-        <div>
-          <span class="font-brand-title text-xs tracking-[0.3em] text-brand-gold uppercase block mb-2">BOUTIQUE & ATELIER</span>
-          <h3 class="font-brand-title text-2xl sm:text-3xl font-bold text-white">공식 플래그십 살롱 안내</h3>
+      <!-- Showrooms Detail Grid -->
+      <div class="mb-16">
+        <h3 class="font-brand-title text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <i data-lucide="map-pin" class="w-5 h-5 text-brand-gold"></i>
+          <span>공식 프라이빗 쇼룸 안내 (100% 사전 예약제)</span>
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-6 rounded-2xl bg-brand-card border border-white/10">
+            <h4 class="font-brand-title text-base font-bold text-white mb-1">서울 청담 마스터 살롱</h4>
+            <p class="text-xs text-gray-400 mb-2">서울특별시 강남구 압구정로 420 AURELIA 메종<br>Tel. 02-588-9000</p>
+            <span class="text-[10px] text-brand-goldLight font-mono">발렛 파킹 & 샴페인 라운지 상시 운영</span>
+          </div>
+          <div class="p-6 rounded-2xl bg-brand-card border border-white/10">
+            <h4 class="font-brand-title text-base font-bold text-white mb-1">부산 해운대 마린 아틀리에</h4>
+            <p class="text-xs text-gray-400 mb-2">부산광역시 해운대구 마린시티2로 38 오션 펜트하우스<br>Tel. 051-744-9000</p>
+            <span class="text-[10px] text-brand-goldLight font-mono">요트 클럽 연계 시승 프로그램 지원</span>
+          </div>
+          <div class="p-6 rounded-2xl bg-brand-card border border-white/10">
+            <h4 class="font-brand-title text-base font-bold text-white mb-1">제주 프라이빗 빌라</h4>
+            <p class="text-xs text-gray-400 mb-2">제주특별자치도 서귀포시 안덕면 산록남로 780<br>Tel. 064-792-9000</p>
+            <span class="text-[10px] text-brand-goldLight font-mono">한라산 산악 와인딩 프라이빗 코스 운영</span>
+          </div>
         </div>
-        <p class="text-xs text-gray-400 mt-2 md:mt-0 font-light">전 살롱 사전 예약제(100% By Appointment Only)로 운영됩니다.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="p-6 rounded-2xl bg-brand-card border border-white/10 hover:border-brand-gold/40 transition-colors">
-          <div class="flex items-center gap-2 text-brand-gold text-xs font-bold uppercase tracking-wider mb-2">
-            <i data-lucide="map-pin" class="w-4 h-4"></i>
-            <span>SEOUL CHEONGDAM</span>
-          </div>
-          <h4 class="font-brand-title text-lg font-bold text-white mb-2">청담 마스터 살롱</h4>
-          <p class="text-xs text-gray-400 leading-relaxed mb-4">서울특별시 강남구 압구정로 420 AURELIA 메종<br>Tel. 02-588-9000 (VIP 컨시어지 핫라인)</p>
-          <span class="text-[10px] text-brand-goldLight font-mono">발렛 파킹 & 샴페인 라운지 상시 운영</span>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-brand-card border border-white/10 hover:border-brand-gold/40 transition-colors">
-          <div class="flex items-center gap-2 text-brand-gold text-xs font-bold uppercase tracking-wider mb-2">
-            <i data-lucide="map-pin" class="w-4 h-4"></i>
-            <span>BUSAN MARINE CITY</span>
-          </div>
-          <h4 class="font-brand-title text-lg font-bold text-white mb-2">해운대 마린 아틀리에</h4>
-          <p class="text-xs text-gray-400 leading-relaxed mb-4">부산광역시 해운대구 마린시티2로 38 오션 펜트하우스<br>Tel. 051-744-9000</p>
-          <span class="text-[10px] text-brand-goldLight font-mono">요트 클럽 연계 시승 프로그램 지원</span>
-        </div>
-
-        <div class="p-6 rounded-2xl bg-brand-card border border-white/10 hover:border-brand-gold/40 transition-colors">
-          <div class="flex items-center gap-2 text-brand-gold text-xs font-bold uppercase tracking-wider mb-2">
-            <i data-lucide="map-pin" class="w-4 h-4"></i>
-            <span>JEJU ESTATE</span>
-          </div>
-          <h4 class="font-brand-title text-lg font-bold text-white mb-2">제주 프라이빗 빌라</h4>
-          <p class="text-xs text-gray-400 leading-relaxed mb-4">제주특별자치도 서귀포시 안덕면 산록남로 780<br>Tel. 064-792-9000</p>
-          <span class="text-[10px] text-brand-goldLight font-mono">한라산 산악 와인딩 프라이빗 코스 운영</span>
-        </div>
+      <!-- Category Bottom Navigation Controls -->
+      <div class="glass-luxury p-6 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <button onclick="switchCategory('membership')" class="text-xs text-gray-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="chevron-left" class="w-4 h-4 text-brand-gold"></i>
+          <span>이전 카테고리: 05. VIP 멤버십</span>
+        </button>
+        <button onclick="switchCategory('home')" class="px-5 py-2.5 rounded-xl bg-brand-gold text-black font-bold text-xs uppercase tracking-wider hover:bg-brand-goldLight transition-colors flex items-center gap-2">
+          <i data-lucide="grid" class="w-4 h-4"></i>
+          <span>홈 (전체 카테고리 허브)으로 돌아가기</span>
+        </button>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
+
 
   <!-- FOOTER -->
-  <footer class="bg-black text-gray-400 py-16 px-6 border-t border-brand-gold/20">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 pb-12 border-b border-white/10">
+  <footer class="bg-black text-gray-400 py-12 px-6 border-t border-brand-gold/20">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 pb-8 border-b border-white/10">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full border border-brand-gold/50 flex items-center justify-center bg-brand-gold/10">
+        <div class="w-9 h-9 rounded-full border border-brand-gold/50 flex items-center justify-center bg-brand-gold/10">
           <svg class="w-5 h-5 text-brand-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
           </svg>
         </div>
         <div>
-          <span class="font-brand-title text-xl font-bold tracking-widest text-white block">AURELIA AUTOMOBILI</span>
+          <span class="font-brand-title text-lg font-bold tracking-widest text-white block">AURELIA AUTOMOBILI</span>
           <span class="text-[9px] uppercase tracking-[0.3em] text-brand-gold">Crafted Without Compromise</span>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center justify-center gap-6 text-xs uppercase tracking-wider text-gray-400">
-        <a href="#models" class="hover:text-brand-gold transition-colors">컬렉션</a>
-        <a href="#bespoke" class="hover:text-brand-gold transition-colors">비스포크</a>
-        <a href="#craftsmanship" class="hover:text-brand-gold transition-colors">헤리티지</a>
-        <a href="#booking" class="hover:text-brand-gold transition-colors">시승 상담</a>
-        <a href="#" class="hover:text-brand-gold transition-colors">개인정보처리방침</a>
+      <div class="flex flex-wrap items-center justify-center gap-5 text-xs uppercase tracking-wider text-gray-400">
+        <button onclick="switchCategory('home')" class="hover:text-brand-gold transition-colors">홈 & 카테고리</button>
+        <button onclick="switchCategory('models')" class="hover:text-brand-gold transition-colors">컬렉션</button>
+        <button onclick="switchCategory('bespoke')" class="hover:text-brand-gold transition-colors">비스포크</button>
+        <button onclick="switchCategory('craftsmanship')" class="hover:text-brand-gold transition-colors">헤리티지</button>
+        <button onclick="switchCategory('experience')" class="hover:text-brand-gold transition-colors">엔진 사운드</button>
+        <button onclick="switchCategory('booking')" class="hover:text-brand-gold transition-colors">시승 상담</button>
       </div>
 
       <div class="flex items-center gap-4 text-gray-400">
-        <a href="#" class="w-9 h-9 rounded-full glass-luxury flex items-center justify-center hover:text-brand-gold hover:border-brand-gold transition-colors" title="Instagram">
+        <a href="#" class="w-8 h-8 rounded-full glass-luxury flex items-center justify-center hover:text-brand-gold hover:border-brand-gold transition-colors" title="Instagram">
           <i data-lucide="instagram" class="w-4 h-4"></i>
         </a>
-        <a href="#" class="w-9 h-9 rounded-full glass-luxury flex items-center justify-center hover:text-brand-gold hover:border-brand-gold transition-colors" title="Youtube">
+        <a href="#" class="w-8 h-8 rounded-full glass-luxury flex items-center justify-center hover:text-brand-gold hover:border-brand-gold transition-colors" title="Youtube">
           <i data-lucide="youtube" class="w-4 h-4"></i>
         </a>
-        <a href="#" class="w-9 h-9 rounded-full glass-luxury flex items-center justify-center hover:text-brand-gold hover:border-brand-gold transition-colors" title="Mail Concierge">
+        <a href="#" class="w-8 h-8 rounded-full glass-luxury flex items-center justify-center hover:text-brand-gold hover:border-brand-gold transition-colors" title="Mail Concierge">
           <i data-lucide="mail" class="w-4 h-4"></i>
         </a>
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-gray-500 gap-4">
+    <div class="max-w-7xl mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-gray-500 gap-4">
       <p>&copy; 2026 AURELIA Automobili Group. All Rights Reserved. 대한민국 하이퍼 럭셔리 공식 임포터.</p>
       <p class="font-mono text-gray-600">LUXURY ATELIER &bull; BY APPOINTMENT ONLY</p>
     </div>
@@ -910,9 +1278,7 @@
       </div>
       <h3 class="font-brand-title text-2xl sm:text-3xl font-bold text-white mb-6" id="modalModelTitle">Aurelia Sovereign GT</h3>
 
-      <div class="space-y-3 mb-8 text-sm" id="modalSpecsList">
-        <!-- Dynamically injected specs -->
-      </div>
+      <div class="space-y-3 mb-8 text-sm" id="modalSpecsList"></div>
 
       <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
         <button onclick="closeSpecModal()" class="px-5 py-2.5 rounded-xl border border-white/20 text-xs uppercase tracking-wider text-gray-300 hover:text-white">닫기</button>
@@ -925,7 +1291,6 @@
   <div id="vipPassModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-lg flex items-center justify-center p-4">
     <div class="relative bg-gradient-to-b from-[#1c1c24] to-[#0a0a0d] rounded-3xl max-w-lg w-full p-8 border-2 border-brand-gold shadow-[0_0_60px_rgba(212,175,55,0.4)] text-center">
       
-      <!-- Gold Ribbon / Badge -->
       <div class="w-16 h-16 rounded-full bg-brand-gold/20 border-2 border-brand-gold mx-auto flex items-center justify-center text-brand-gold mb-5 shadow-lg">
         <i data-lucide="crown" class="w-8 h-8"></i>
       </div>
@@ -938,7 +1303,6 @@
         영업시간 기준 2시간 이내에 기재해주신 유선 번호로 사전 맞춤 일정 안내를 드립니다.
       </p>
 
-      <!-- Digital Pass Card -->
       <div class="bg-black/70 rounded-2xl p-5 border border-brand-gold/30 text-left space-y-2.5 mb-6 text-xs font-mono">
         <div class="flex justify-between border-b border-white/10 pb-2">
           <span class="text-gray-400">초대 고객:</span>
@@ -973,6 +1337,57 @@
     // Initialize Lucide Icons
     lucide.createIcons();
 
+    // CATEGORY VIEW SWITCHING ENGINE (카테고리 전환 핵심 로직)
+    const categoryNames = {
+      home: "홈 (사이트 소개 & 카테고리)",
+      models: "01. 플래그십 컬렉션",
+      bespoke: "02. 비스포크 아틀리에",
+      craftsmanship: "03. 장인정신 & 헤리티지",
+      experience: "04. 엔진 사운드 익스피리언스",
+      membership: "05. VIP 멤버십 & 특권",
+      booking: "06. VIP 시승 & 살롱 예약"
+    };
+
+    function switchCategory(categoryId) {
+      // 1. Hide all views
+      const views = document.querySelectorAll('.category-view');
+      views.forEach(view => {
+        view.classList.add('hidden');
+        view.classList.remove('block');
+      });
+
+      // 2. Show the targeted view
+      const targetView = document.getElementById('view-' + categoryId);
+      if (targetView) {
+        targetView.classList.remove('hidden');
+        targetView.classList.add('block');
+      }
+
+      // 3. Update active nav button styling
+      const navButtons = document.querySelectorAll('.nav-tab-btn');
+      navButtons.forEach(btn => {
+        if (btn.dataset.cat === categoryId) {
+          btn.classList.add('bg-brand-gold', 'text-black', 'font-bold', 'shadow-md');
+          btn.classList.remove('text-gray-300', 'hover:bg-white/5');
+        } else {
+          btn.classList.remove('bg-brand-gold', 'text-black', 'font-bold', 'shadow-md');
+          btn.classList.add('text-gray-300', 'hover:bg-white/5');
+        }
+      });
+
+      // 4. Update top bar indicator badge
+      const topBadge = document.getElementById('topActiveCategoryBadge');
+      if (topBadge && categoryNames[categoryId]) {
+        topBadge.innerText = categoryNames[categoryId];
+      }
+
+      // 5. Scroll to top smoothly
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Re-trigger icon rendering if needed
+      lucide.createIcons();
+    }
+
     // Set Default Minimum Date for Booking to Tomorrow
     const dateInput = document.getElementById('custDate');
     if (dateInput) {
@@ -988,13 +1403,11 @@
     mobileMenuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
     });
-    document.querySelectorAll('.mobile-nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenu.classList.add('hidden');
-      });
-    });
+    function closeMobileMenu() {
+      mobileMenu.classList.add('hidden');
+    }
 
-    // Car Filter Logic
+    // Car Filter Logic in Models View
     function filterCars(category) {
       const buttons = document.querySelectorAll('.tab-btn');
       buttons.forEach(btn => {
@@ -1094,10 +1507,7 @@
       if (select) {
         select.value = modelName;
       }
-      const bookingSec = document.getElementById('booking');
-      if (bookingSec) {
-        bookingSec.scrollIntoView({ behavior: 'smooth' });
-      }
+      switchCategory('booking');
     }
 
     // BESPOKE CONFIGURATOR STATE
@@ -1170,8 +1580,7 @@
         notes.value = `[비스포크 구성 정보]\n- 컬러: ${bespokeState.color}\n- 휠: ${bespokeState.wheelName}\n- 인테리어: ${bespokeState.interiorName}\n- 예상가: ${document.getElementById('totalEstimatedPrice').innerText}`;
       }
 
-      const bookingSec = document.getElementById('booking');
-      bookingSec.scrollIntoView({ behavior: 'smooth' });
+      switchCategory('booking');
     }
 
     // WEB AUDIO API - V12 EXHAUST SOUND SYNTHESIZER
@@ -1211,7 +1620,6 @@
 
       const now = audioCtx.currentTime;
 
-      // Master Gain
       const masterGain = audioCtx.createGain();
       masterGain.gain.setValueAtTime(0.001, now);
       masterGain.gain.exponentialRampToValueAtTime(0.4, now + 0.3);
@@ -1219,21 +1627,18 @@
       masterGain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
       masterGain.connect(audioCtx.destination);
 
-      // Low rumble osc
       const osc1 = audioCtx.createOscillator();
       osc1.type = 'sawtooth';
       osc1.frequency.setValueAtTime(65, now);
       osc1.frequency.exponentialRampToValueAtTime(260, now + 1.0);
       osc1.frequency.exponentialRampToValueAtTime(70, now + 2.6);
 
-      // Harmonics osc
       const osc2 = audioCtx.createOscillator();
       osc2.type = 'triangle';
       osc2.frequency.setValueAtTime(130, now);
       osc2.frequency.exponentialRampToValueAtTime(520, now + 1.0);
       osc2.frequency.exponentialRampToValueAtTime(140, now + 2.6);
 
-      // Lowpass filter
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.setValueAtTime(450, now);
