@@ -1,13 +1,18 @@
-# AURELIA AUTOMOBILI | Luxury Automotive Landing Page
+# LEECAR | Luxury Automobili Landing Page
 
 하이엔드 럭셔리 자동차 브랜드 홍보 및 비스포크 판매 서비스를 위한 인터랙티브 웹 랜딩페이지입니다.
 
-## ✨ 주요 기능
-- **럭셔리 비주얼 디자인**: 딥 옵시디언 다크 테마 & 로열 샴페인 골드 글래스모피즘 UI
-- **플래그십 모델 쇼케이스**: 그랜드 투어러(GT), 초호화 의전 세단(Royale), 차세대 하이퍼 EV 라인업 필터링 및 상세 제원 모달
-- **인터랙티브 비스포크 아틀리에**: 실시간 외장 컬러, 휠 디자인, 가죽 인테리어 옵션 조합 및 실시간 견적 산출기
-- **Web Audio API V12 배기음 시뮬레이터**: 브라우저 내장 오디오 합성 엔진을 통한 V12 가속음 및 아이들링 사운드 청음
-- **VIP 프라이빗 시승 예약 시스템**: 청담/해운대/제주 살롱 예약 및 공식 골드 VIP 디지털 패스 발급 모달
+## ✨ 주요 구조 및 기능
+- **단순화된 초기 화면**: 
+  - "LEECAR에 오신 것을 환영합니다." 메인 인트로
+  - 직관적인 3대 핵심 카테고리 구성 (**MODELS, PRIVILEGE, BOOKING**)
+- **MODELS 카테고리 (내부 서브 탭 제공)**:
+  - **LINEUP**: Sovereign GT, Phantom Royale, Chronos E-Hyper 플래그십 차량 라인업 및 상세 제원
+  - **BESPOKE**: 외장 컬러, 단조 휠, 가죽 인테리어 실시간 3D 조합 및 견적 산출기
+  - **HERITAGE**: 450시간 수작업 공정 및 F1 카본 모노코크 항공 엔지니어링
+  - **SOUND**: Web Audio API 기반 V12 가속음 & 아이들링 배기음 시뮬레이터
+- **PRIVILEGE**: 24/7 전담 버틀러 케어, LEECAR 프라이빗 클럽, 10년 안심 무상 워런티
+- **BOOKING**: 서울 청담, 부산 마린시티, 제주 살롱 1:1 시승 예약 및 공식 골드 VIP 패스 발급
 
 ## 🛠 기술 스택
 - HTML5 / CSS3 / Vanilla JavaScript
