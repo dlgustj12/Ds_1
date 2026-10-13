@@ -33,6 +33,9 @@
    - 복잡한 카테고리를 **`MODELS`**, **`PRIVILEGE`**, **`BOOKING`**의 3대 핵심 카테고리 카드로 축약하여 첫인상 집중도 향상.
 5. **`MODELS` 카테고리 내부 서브 탭 통합**:
    - 기존에 분산되어 있던 `LINEUP`, `BESPOKE (조합 및 견적)`, `HERITAGE (장인정신)`, `SOUND (엔진 사운드)`를 `MODELS` 카테고리 내부의 서브 탭 메뉴로 깔끔하게 통합.
+6. **사이트 전체 폰트 체계 일원화 (모던 산세리프 통일)**:
+   - 기존의 굴곡 있는 세리프(Serif, `Cinzel`) 폰트를 전면 제거하고, 가독성이 뛰어난 영문 `Plus Jakarta Sans`와 한글 `Noto Sans KR` 조합으로 통일.
+   - 로고, 제목, 본문, 버튼, 폼 인풋, 모노스페이스 영역까지 전역 산세리프로 일원화하여, `"모델 및 아틀리에 탐색"` 및 `"Automobili Privé"` 수준의 단정하고 일관된 모던 럭셔리 비주얼 완성.
 
 ---
 
@@ -45,8 +48,9 @@
   - 액센트 골드: `#D4AF37` (Main Gold), `#F3E5AB` (Light Gold), `#AA7C11` (Deep Gold)
   - 보더 & 분할선: `border-white/10`, `border-brand-gold/30`
 - **타이포그래피**:
-  - 전체 통일 폰트: `Plus Jakarta Sans` (영문/숫자), `Noto Sans KR` (한글/공통), `sans-serif` (굴곡 없는 깔끔한 산세리프 단일 체계로 일원화)
-  - 제목 및 엠블럼: `letter-spacing: 0.1em` 내외의 자간 확장 유지로 모던 럭셔리 무드 연출
+  - 전체 통일 폰트: `Plus Jakarta Sans` (영문/숫자), `Noto Sans KR` (한글/공통), `sans-serif` (굴곡 없는 깔끔한 산세리프 단일 체계로 일원화, 세리프/Cinzel 사용 금지)
+  - 제목 및 엠블럼: `.font-brand-title`에 자간 `letter-spacing: 0.1em` 유지로 모던 럭셔리 무드 연출
+  - 폼 요소(`input`, `select`, `button` 등) 및 Tailwind mono 설정까지 전체 산세리프 폰트로 상속
 - **내비게이션 체계**:
   - 최상위 메뉴: `홈 (HOME)`, `MODELS`, `PRIVILEGE`, `BOOKING` 3대 카테고리 유지
   - 차량 관련 세부 기능(견적, 사운드, 기술)은 반드시 `MODELS`의 서브 탭으로 관리
