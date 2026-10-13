@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LEECAR | The Zenith of Luxury Automobili</title>
-  <!-- Google Fonts: Cinzel & Plus Jakarta Sans & Noto Sans KR -->
+  <!-- Google Fonts: Plus Jakarta Sans & Noto Sans KR (Unified Clean Sans-Serif) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -30,8 +30,9 @@
             }
           },
           fontFamily: {
-            serif: ['Cinzel', 'serif'],
-            sans: ['Plus Jakarta Sans', 'Noto Sans KR', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', '"Noto Sans KR"', 'sans-serif'],
+            serif: ['"Plus Jakarta Sans"', '"Noto Sans KR"', 'sans-serif'],
+            mono: ['"Plus Jakarta Sans"', '"Noto Sans KR"', 'sans-serif'],
           },
           backgroundImage: {
             'gold-gradient': 'linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%)',
@@ -63,7 +64,10 @@
     }
   </script>
   <style>
-    /* Custom Luxury Styling */
+    /* Custom Luxury Styling - Unified Modern Sans-Serif */
+    *, html, body, button, input, select, textarea {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+    }
     body {
       background-color: #08080A;
       color: #E2E4E9;
@@ -71,8 +75,8 @@
       overflow-x: hidden;
     }
     .font-brand-title {
-      font-family: 'Cinzel', serif;
-      letter-spacing: 0.15em;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+      letter-spacing: 0.1em;
     }
     .text-gold-shine {
       background: linear-gradient(135deg, #FFF1BD 0%, #D4AF37 40%, #B8860B 80%, #F5DEB3 100%);

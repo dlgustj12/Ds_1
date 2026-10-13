@@ -45,8 +45,8 @@
   - 액센트 골드: `#D4AF37` (Main Gold), `#F3E5AB` (Light Gold), `#AA7C11` (Deep Gold)
   - 보더 & 분할선: `border-white/10`, `border-brand-gold/30`
 - **타이포그래피**:
-  - 영문 제목 및 엠블럼: `Cinzel` (Serif, 자간 0.15em 이상 확장)
-  - 본문 및 한글 텍스트: `Plus Jakarta Sans`, `Noto Sans KR`
+  - 전체 통일 폰트: `Plus Jakarta Sans` (영문/숫자), `Noto Sans KR` (한글/공통), `sans-serif` (굴곡 없는 깔끔한 산세리프 단일 체계로 일원화)
+  - 제목 및 엠블럼: `letter-spacing: 0.1em` 내외의 자간 확장 유지로 모던 럭셔리 무드 연출
 - **내비게이션 체계**:
   - 최상위 메뉴: `홈 (HOME)`, `MODELS`, `PRIVILEGE`, `BOOKING` 3대 카테고리 유지
   - 차량 관련 세부 기능(견적, 사운드, 기술)은 반드시 `MODELS`의 서브 탭으로 관리
